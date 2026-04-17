@@ -20,8 +20,8 @@ def main():
     st.write("**Todos os campos devem ser preenchidos**")
 
     # criar navegacao e jogar st.image para la
-    #st.sidebar.image(r"icons\logo_icon.png")
-    #st.sidebar.title("Temos inumeras vagas á sua espera")
+    st.sidebar.image(r"img\logo_icon.png")
+    st.sidebar.title("Temos inumeras vagas á sua espera")
 
     st.sidebar.divider()
 
