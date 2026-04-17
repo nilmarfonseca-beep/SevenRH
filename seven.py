@@ -104,6 +104,23 @@ def main():
                 uf, nascimento, idade, email, telefone, contato, pagamento, origem)
         st.success(" 👍 Parabéns, dados inseridos com sucesso")
         st.balloons()
+                carimbo = ""
+        autorizo = ""
+        cpf = "" 
+        nome = "" 
+        cep = "" 
+        endereco = "" 
+        complemento = "" 
+        bairro = "" 
+        cidade = "" 
+        uf = ""
+        nascimento = ""
+        idade = ""
+        email = ""
+        telefone = ""
+        contato = ""
+        pagamento= ""
+        origem  = ""
         
 if __name__ == "__main__":
 
