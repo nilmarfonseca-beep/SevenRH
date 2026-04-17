@@ -20,10 +20,10 @@ def main():
     st.write("**Todos os campos devem ser preenchidos**")
 
     # criar navegacao e jogar st.image para la
-    st.sidebar.image("img\logo_icon.png")
-    st.sidebar.title("Temos inumeras vagas á sua espera")
+    #st.sidebar.image("img\logo_icon.png")
+    #st.sidebar.title("Temos inumeras vagas á sua espera")
 
-    st.sidebar.divider()
+    #st.sidebar.divider()
 
     carimbo = st.date_input("Data de cadastro", value = pd.Timestamp.today().date(),disabled=True, format="DD/MM/YYYY")
 
