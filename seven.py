@@ -104,7 +104,7 @@ def main():
                 uf, nascimento, idade, email, telefone, contato, pagamento, origem)
         st.success(" 👍 Parabéns, dados inseridos com sucesso")
         st.balloons()
-        carimbo = ""
+        #carimbo = ""
         autorizo = ""
         cpf = "" 
         nome = "" 
