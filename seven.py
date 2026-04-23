@@ -19,11 +19,24 @@ def main():
     st.title("📋 Cadastro do Candidato")
     st.write("**Todos os campos devem ser preenchidos**")
 
-    # criar navegacao e jogar st.image para la
-    #st.sidebar.image("img\logo_icon.png")
-    #st.sidebar.title("Temos inumeras vagas á sua espera")
+    #criar navegacao e jogar st.image para la
 
-    #st.sidebar.divider()
+    # CSS para ajustar a largura da sidebar
+    st.markdown(
+        """
+        <style>
+            [data-testid="stSidebar"] {
+                min-width: 200px;
+                max-width: 200px;
+            }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+    st.sidebar.image(r"icons\logo_icon.png")
+    st.sidebar.title("Temos inumeras vagas á sua espera")
+
+    st.sidebar.divider()
 
     carimbo = st.date_input("Data de cadastro", value = pd.Timestamp.today().date(),disabled=True, format="DD/MM/YYYY")
 
@@ -35,8 +48,6 @@ def main():
     st.write("")
 
     
-    
-
     autorizo = st.radio("Autoriza o uso dos dados? ",("Autorizo", "Não autorizo"))
     if autorizo != "Autorizo":
          st.info(" 🛑 Vc não autorizou o uso, por favor altere ou feche o app")
@@ -94,17 +105,18 @@ def main():
     email = st.text_input("Digite seu email*")
     telefone = st.text_input("Digite seu numero de telefone*")
     contato = st.text_input("Digite o numero para contato*")
-    opcoes = ["Pagarei taxa de cadastro qdo estiver trabalhando", "Pagarei taxa de cadastro apos cadastro efetuado","Autorizo desconto no 1o pagamento"]
-    pagamento = st.selectbox("Escolha a forma como vi pagar", opcoes, key="opcao")
+    opcoes = ["Pix no ato do contrato", "Qdo estiver trabalhando", "Apos cadastro efetuado","Autorizo desconto no 1o pagamento"]
+    pagamento = st.selectbox("Forma de pagamento do cadastro(R$ 70,00)", opcoes, key="opcao")
     origem = st.text_input("Origem do cadastro", value="Formulario", disabled=True)
-    botaodesbilitado = not (cpf and nome and cep)
+    botaodesbilitado = not (cpf and nome)
 
     if st.button(" 💾 Adicionar dados e fecha app",disabled=botaodesbilitado):
         funcoes.inseredados(carimbo, autorizo, cpf, nome, cep, endereco, complemento, bairro, cidade,
                 uf, nascimento, idade, email, telefone, contato, pagamento, origem)
         st.success(" 👍 Parabéns, dados inseridos com sucesso")
-        st.balloons()
-        #carimbo = ""
+        
+
+        carimbo = ""
         autorizo = ""
         cpf = "" 
         nome = "" 
@@ -121,6 +133,10 @@ def main():
         contato = ""
         pagamento= ""
         origem  = ""
+
+        st.balloons()
+
+        st.rerun()
         
 if __name__ == "__main__":
 

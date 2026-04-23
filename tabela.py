@@ -1,13 +1,14 @@
 import sqlite3
+import bcrypt
+from funcoes import psycopg2
 
 conexao = sqlite3.connect("Clientes.db")
-
 
 cursor = conexao.cursor()
 
 cursor.execute(
     """
-        CREATE TABLE Cliente(
+        CREATE TABLE IF NOT EXISTS Cliente(
             ID_Cliente INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
             Carimbo TEXT,
             Autorizo TEXT NOT NULL,
@@ -30,4 +31,34 @@ cursor.execute(
     """
 )
 
+#    conn = psycopg2.connect("dbname=meubanco user=meuuser password=1234")
+
+
+cursor.execute(
+    """
+        CREATE TABLE IF NOT EXISTS usuarios (
+            id SERIAL PRIMARY KEY,
+            username VARCHAR(50) UNIQUE NOT NULL,
+            password_hash VARCHAR(255) NOT NULL 
+            
+        );
+    """                
+)
+
+    # Cria hash da senha inicial
+
+password = "Meire1369"
+hashed = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+
+
+    # Insere usuário admin se não existir
+cursor.execute("""
+        INSERT INTO usuarios (username, password_hash)
+        VALUES (?, ?)
+        ON CONFLICT (username) DO NOTHING;
+    """, ("Meire", hashed)
+)
+
+conexao.commit()
+conexao.close()
 cursor.close()
