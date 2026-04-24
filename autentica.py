@@ -1,6 +1,7 @@
 import streamlit as st
 #import psycopg2
-from funcoes import login_usuario
+#from funcoes import login_usuario
+import funcoes
 
    # CSS para ajustar a largura da sidebar
 st.markdown(
