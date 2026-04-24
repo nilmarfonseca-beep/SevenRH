@@ -1,7 +1,6 @@
 import pandas as pd
 import streamlit as st
 import sqlite3
-import funcoes
 from pathlib import Path
 from st_aggrid import AgGrid, GridOptionsBuilder
 from io import BytesIO
