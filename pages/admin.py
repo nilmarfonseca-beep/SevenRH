@@ -42,7 +42,7 @@ with col1:
      st.write(f"**Olá {st.session_state['usuario_logado']} seja bem vinda(o)**")   
 
 
-st.set_page_config(page_title="Área adminstrativa SevenRH", layout="wide", page_icon=("icons\logo_icon.png"))
+st.set_page_config(page_title="Área adminstrativa SevenRH", layout="wide", page_icon=("img\logo_icon.png"))
  
 
 st.title("📝 Área adminstrativa -​ Manutenção de Candidatos cadastrados")
