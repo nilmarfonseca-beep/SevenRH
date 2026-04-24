@@ -9,7 +9,7 @@ from io import BytesIO
 from docxtpl import DocxTemplate
 from io import BytesIO
 from num2words import num2words
-#import psycopg2
+import psycopg2
 import  bcrypt
  
 
