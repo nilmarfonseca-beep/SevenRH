@@ -2,7 +2,7 @@ docxtpl==0.20.2
 num2words==0.5.14
 pandas==3.0.2
 psycopg2==2.9.12
-python_bcrypt==0.3.2
+#python_bcrypt==0.3.2
 Requests==2.33.1
 SQLAlchemy==2.0.49
 streamlit==1.56.0
