@@ -1,6 +1,6 @@
 #docxtpl==0.20.2
 #num2words==0.5.14
-#pandas==3.0.2
+#pandas==2.2.2
 ##psycopg2==2.9.12
 ##python_bcrypt==0.3.2
 #Requests==2.33.1
@@ -10,6 +10,7 @@
 #psycopg2-binary
 #bcrypt==4.1.2
 #streamlit-aggrid==0.3.4
+#numpy==1.26.4
 
 altair==6.0.0
 attrs==25.4.0
@@ -45,7 +46,6 @@ numpy==1.26.4
 openpyxl==3.1.5
 packaging==26.0
 pandas==2.2.2
-numpy==1.26.4
 pillow==12.1.1
 pipreqs==0.4.13
 plotly==6.7.0
