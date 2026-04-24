@@ -2,7 +2,8 @@ import pandas as pd
 import streamlit as st
 import sqlite3
 from pathlib import Path
-from st_aggrid import AgGrid, GridOptionsBuilder
+#from st_aggrid import AgGrid, GridOptionsBuilder
+streamlit-aggrid==0.3.4
 from io import BytesIO
 from docxtpl import DocxTemplate
 from io import BytesIO
