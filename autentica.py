@@ -1,5 +1,5 @@
 import streamlit as st
-import psycopg2
+#import psycopg2
 from funcoes import login_usuario
 
    # CSS para ajustar a largura da sidebar
