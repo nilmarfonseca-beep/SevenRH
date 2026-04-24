@@ -15,7 +15,7 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
-st.sidebar.image(r"img\logo_icon.png")
+st.sidebar.image(r"icons\logo_icon.png")
 
 def main():
     
