@@ -1,0 +1,56 @@
+import streamlit as st
+import pandas as pd
+import pyodbc
+
+# Conexão com Access
+def connect_access(db_path):
+    conn_str = (
+        r"Driver={Microsoft Access Driver (*.mdb, *.accdb)};"
+        fr"DBQ={db_path};"
+    )
+    return pyodbc.connect(conn_str)
+
+# Inserir somente se não existir
+def insert_if_not_exists(conn, df):
+    cursor = conn.cursor()
+    registros_existentes = []
+    registros_inseridos = []
+
+    for _, row in df.iterrows():
+        # Verifica se já existe pelo ID
+        cursor.execute("SELECT COUNT(*) FROM MinhaTabela WHERE ID=?", row["ID"])
+        count = cursor.fetchone()[0]
+
+        if count > 0:
+            registros_existentes.append((row["Nome"], row["ID"]))
+        else:
+            cursor.execute(
+                "INSERT INTO MinhaTabela (ID, Nome, Campo1, Campo2) VALUES (?, ?, ?, ?)",
+                row["ID"], row["Nome"], row["Campo1"], row["Campo2"]
+            )
+            registros_inseridos.append((row["Nome"], row["ID"]))
+
+    conn.commit()
+    return registros_existentes, registros_inseridos
+
+# Streamlit UI
+st.title("Inserir dados da planilha no Access (com verificação)")
+
+uploaded_file = st.file_uploader("Carregue a planilha gerada", type=["xlsx"])
+if uploaded_file:
+    df = pd.read_excel(uploaded_file)
+    st.write("Prévia dos dados:", df.head())
+
+    if st.button("Processar inserção"):
+        conn = connect_access(r"C:\caminho\seubanco.accdb")
+        existentes, inseridos = insert_if_not_exists(conn, df)
+
+        if inseridos:
+            st.success("Registros inseridos:")
+            for nome, chave in inseridos:
+                st.write(f"- {nome} (ID: {chave})")
+
+        if existentes:
+            st.warning("Já existiam e não foram inseridos:")
+            for nome, chave in existentes:
+                st.write(f"- {nome} (ID: {chave})")
