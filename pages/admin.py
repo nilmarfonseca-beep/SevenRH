@@ -1,22 +1,32 @@
+import sys
+import os
+
+# adiciona a raiz do projeto no path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+import funcoes
 import pandas as pd
 import streamlit as st
 import sqlite3
 from pathlib import Path
-#from st_aggrid import AgGrid, GridOptionsBuilder
-streamlit-aggrid==0.3.4
+from st_aggrid import AgGrid , GridOptionsBuilder, GridUpdateMode
 from io import BytesIO
 from docxtpl import DocxTemplate
 from io import BytesIO
 from num2words import num2words
 from datetime import datetime, date
-from funcoes import psycopg2
+from funcoes import psycopg2, login_usuario
 from funcoes import login_usuario
 from auth import proteger_rota
+import configparser
+from funcoes import valor_por_extenso, percentual_por_extenso
 
 
+# Verifica se usuario esta logado
 proteger_rota()
 
-   # CSS para ajustar a largura da sidebar
+
+# CSS para ajustar a largura da sidebar
 st.markdown(
     """
     <style>
@@ -28,7 +38,10 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
-st.sidebar.image(r"icons\logo_icon.png")
+
+
+
+#st.sidebar.image(r"icons\logo_icon.png")
 
 # layout em linha
 col1, col2 = st.columns([10, 1])
@@ -40,10 +53,11 @@ with col2:
         st.rerun()
 
 with col1:
-     st.write(f"**Olá {st.session_state['usuario_logado']} seja bem vinda(o)**")   
+     st.write(f"**Olá {st.session_state['usuario_logado']} seja bem vinda(o)**")  
+     st.divider() 
 
 
-st.set_page_config(page_title="Área adminstrativa SevenRH", layout="wide", page_icon=("img\logo_icon.png"))
+st.set_page_config(page_title="Área adminstrativa SevenRH", layout="wide", page_icon=("icons/logo_icon.png"))
  
 
 st.title("📝 Área adminstrativa -​ Manutenção de Candidatos cadastrados")
@@ -61,18 +75,22 @@ if st.sidebar.button("🏃Logout"):
     st.session_state["usuario_logado"] = False
     st.warning("Você saiu da conta.")
     st.switch_page("autentica.py")
+    st.switch_page("autentica.py")  # redireciona para o arquivo principal
     st.rerun()
-    st.switch_page("autentica.py")
-    #st.stop()
-    
+
+
+st.sidebar.divider()    
+#st.sidebar.image(r"icons\logo_icon.png")
 
 
 st.write("**Ao selecionar um registro, será mostrado novas opções.**")
 
-conexao = sqlite3.connect("Clientes.db")
+#conexao = sqlite3.connect("Clientes.db")
+conexao = funcoes.conectaBD()
 cursor = conexao.cursor()
 cursor.execute("SELECT * FROM Cliente")
 clientes_cadastrados = cursor.fetchall()
+conexao.close()
 
 # Inicialização
 clientes_cadastrados = pd.DataFrame(clientes_cadastrados, columns=["id_cliente", "carimbo", "autorizo", "cpf", "nome", "cep",  "endereco", "complemento", "bairro", "cidade", "uf", "nascimento", "idade", "email", "telefone", "contato",  "pagamento", "origem"])
@@ -103,7 +121,7 @@ st.markdown("""
         color: white;
         border-radius: 8px;
         height: 50px;
-        width: 220px;
+        width: 160px;
         font-weight: bold;
     }
     div[data-testid="stDownloadButton"] > button:hover {
@@ -128,15 +146,17 @@ output.seek(0)
 
 
 gb = GridOptionsBuilder.from_dataframe(df)
-gb.configure_selection("single", use_checkbox=True, rowMultiSelectWithClick=True)  # clique direto
+gb.configure_selection("single", use_checkbox=True, rowMultiSelectWithClick=False)  # clique direto
 
 gridOptions = gb.build()
 
 grid = AgGrid(
     df,
     gridOptions=gridOptions,
-    update_mode="SELECTION_CHANGED",
-    height=200
+    gridUpdateMode=GridUpdateMode.VALUE_CHANGED,
+    height=200,
+    fit_columns_on_grid_load=True,
+    allow_unsafe_jscode=True
 )
 
 
@@ -144,13 +164,24 @@ selected = grid.get("selected_rows")
 #Alimenta variaveis apos selecionar registro
 if selected is not None and len(selected) > 0:
     linha = selected.iloc[0].to_dict()
+    #linha = selected[0]
     id = linha["id_cliente"]
 
     # Converte o carimbo e nascimento para formato brasileiro (dd/mm/aaaa)
     carimbo_formatado = datetime.strptime(linha["carimbo"], "%Y-%m-%d").strftime("%d/%m/%Y")
     nascimento_formatado = datetime.strptime(linha["nascimento"], "%Y-%m-%d").strftime("%d/%m/%Y")
+
+    # Se já existe arquivo, carrega valores
+    ARQUIVO = "dados.txt"
+    if os.path.exists(ARQUIVO):
+        with open(ARQUIVO, "r", encoding="utf-8") as f:
+            dados = f.read().split(";")
+            if len(dados) == 2:
+                valor_default, percentual_default = dados
+                valor_float = float(valor_default)
+                percentual_float = float(percentual_default)
     
-    if st.button("Gerar Contrato e promissória"):
+    if st.sidebar.button("Gerar Contrato e promissória"):
         # Carregar modelo
         doc = DocxTemplate("model_contrato-Promissoria.docx")
 
@@ -169,12 +200,12 @@ if selected is not None and len(selected) > 0:
             "telefone": linha["telefone"],
             "contato": linha["contato"],
             "email": linha["email"],
-            "valor_contrato": "70,00",
-            "valorextenso": "Setenta Reais",
+            "valor_contrato": valor_float,
+            "valorextenso": valor_por_extenso(valor_float),
             "meses" : "6",
             "mesExtenso" : "Seis",
-            "valor_percentual": 20,
-            "percentualextenso": "Vinte por cento",
+            "valor_percentual": percentual_float,
+            "percentualextenso": percentual_por_extenso(percentual_float),
             "origem": linha["origem"]
         }
 
@@ -184,8 +215,8 @@ if selected is not None and len(selected) > 0:
         doc.save(buffer)
         buffer.seek(0)
 
-        st.download_button(
-            label="⬇️ Baixar documento",
+        st.sidebar.download_button(
+            label="⬇️Baixar documento",
             data=buffer,
             file_name=f"Contrato_{linha['nome']}.docx",
             mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
@@ -193,7 +224,7 @@ if selected is not None and len(selected) > 0:
         )
      
 
-    if st.button(" 🗑️ Apagar registro", disabled=True):
+    if st.sidebar.button(" 🗑️Apagar registro", disabled=True):
         st.write("Cuidado, se apagar, nao tem como recuperar o registro")
         conexao = funcoes.conectaBD()
         cursor = conexao.cursor()
@@ -208,11 +239,13 @@ st.divider()
 
 
 # Botão de download com nome do arquivo e aba personalizada
-st.download_button(
-    label="📥 Baixar planilha Excel",
+st.sidebar.download_button(
+    label="Baixar planilha excel",
     data=output,
     file_name="clientes cadastrados.xlsx",
     mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 )
 
+
+st.sidebar.image(r"icons\logo_icon.png")
       
