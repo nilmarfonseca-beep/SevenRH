@@ -11,6 +11,7 @@ from io import BytesIO
 from num2words import num2words
 import psycopg2
 import  bcrypt
+import configparser
  
 
 def conectaBD():
@@ -219,4 +220,7 @@ def login_usuario(username, password):
         return True
         #st.success(f"Olá {username }, vc esta logado")
     else:
-        return False    
+        return False 
+
+
+  

@@ -1,7 +1,6 @@
 import streamlit as st
-#import psycopg2
-#from funcoes import login_usuario
-import funcoes
+import psycopg2
+from funcoes import login_usuario
 
    # CSS para ajustar a largura da sidebar
 st.markdown(
@@ -15,13 +14,13 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
-st.sidebar.image(r"img\logo_icon.png")
+st.sidebar.image(r"icons/logo_icon.png")
 
 def main():
     
-    st.set_page_config(page_title="Área de Login SevenRH", layout="centered", page_icon=("img\logo_icon.png"))
+    st.set_page_config(page_title="Área de Login SevenRH", layout="centered", page_icon=("icons/logo_icon.png"))
     
-    st.image(image= "icons\logo_icon.png",width=150)
+    st.image(image= "icons/logo_icon.png",width=100)
 
     st.title("🔐 Faça login para acessar a área administrativa")
 

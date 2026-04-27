@@ -60,5 +60,5 @@ cursor.execute("""
 )
 
 conexao.commit()
-conexao.close()
 cursor.close()
+conexao.close()
