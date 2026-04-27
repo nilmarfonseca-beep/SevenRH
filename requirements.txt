@@ -27,6 +27,5 @@ docxtpl
 num2words
 bcrypt
 xlsxwriter
-pyodbc
 configparser
 os
